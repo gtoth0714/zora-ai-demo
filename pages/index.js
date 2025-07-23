@@ -8,13 +8,17 @@ export default function Home() {
   const [selectedImage, setSelectedImage] = useState("");
   const [loading, setLoading] = useState(false);
   const [minting, setMinting] = useState(false);
+  const [sentiment, setSentiment] = useState(""); // új állapot a hangulatnak
+  const [sentimentLoading, setSentimentLoading] = useState(false);
 
   async function generateImage(e) {
     e.preventDefault();
     setLoading(true);
     setImageUrls([]);
     setSelectedImage("");
+    setSentiment(""); // korábbi sentiment törlése
 
+    // Kép generálás fetch
     const res = await fetch("/api/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -29,6 +33,31 @@ export default function Home() {
       alert(data.error || "Error generating images");
     }
     setLoading(false);
+
+    // Párhuzamosan elindítjuk a sentiment lekérést
+    getSentiment(prompt);
+  }
+
+  async function getSentiment(text) {
+    setSentimentLoading(true);
+    try {
+      const res = await fetch("/api/sentiment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setSentiment(data.sentiment || "Unknown");
+      } else {
+        setSentiment("Error fetching sentiment");
+      }
+    } catch {
+      setSentiment("Error fetching sentiment");
+    }
+    setSentimentLoading(false);
   }
 
   async function mintCoin() {
@@ -89,6 +118,10 @@ export default function Home() {
           </button>
         </form>
 
+        {/* Sentiment megjelenítés */}
+        {sentimentLoading && <p>Analyzing sentiment...</p>}
+        {sentiment && !sentimentLoading && <p>Sentiment: {sentiment}</p>}
+
         {imageUrls.length > 0 && (
           <div className="image-grid">
             {imageUrls.map((url, idx) => (
@@ -98,6 +131,7 @@ export default function Home() {
                 alt={`Generated ${idx}`}
                 onClick={() => setSelectedImage(url)}
                 className={selectedImage === url ? "selected" : ""}
+                style={{ cursor: "pointer" }}
               />
             ))}
           </div>

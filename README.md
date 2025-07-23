@@ -3,19 +3,22 @@ Zora AI Image Minting Demo
 
 Describe the product in less than 100 words:
 
-This web app integrates the Zora Coins Protocol SDK with AI-generated images. Users input a text prompt to generate images via the Replicate API, then mint those images as unique Zora Coins on Ethereum using MetaMask. The app serves as a simple demo showcasing AI and blockchain minting integration.
+This web app integrates the Zora Coins Protocol SDK with AI-generated images and sentiment analysis. Users input a text prompt to generate images via the Replicate API, analyze the emotional tone (sentiment) of their prompt, and mint the resulting content as unique Zora Coins on Ethereum using MetaMask. It serves as a lightweight demo showcasing how AI and blockchain can work together.
 
 What it does:
 
-- Takes user text input and generates three AI images
-- Displays the images in a preview layout
-- Allows the user to select one image
-- Mints the selected image as a Zora Coin on Ethereum testnet
-- Connects to MetaMask wallet for blockchain interaction
+- Takes user text input  
+- Generates three AI images based on the prompt (via Replicate API)  
+- Analyzes the sentiment of the text input (positive, neutral, or negative)  
+- Displays the sentiment result in the UI  
+- Displays the generated images in a grid  
+- Allows the user to select one image  
+- Mints the selected image as a Zora Coin on the Ethereum testnet  
+- Connects to a MetaMask wallet for blockchain interaction
 
 The problem it solves:
 
-Demonstrates a working integration of AI-generated content with blockchain minting using the Zora Coins SDK, providing a base for future NFT and digital asset projects.
+Demonstrates a working integration of AI-generated content and sentiment analysis with blockchain minting using the Zora Coins SDK. This could serve as a foundation for future NFT, tokenized emotion, or AI-driven asset platforms.
 
 Getting Started:
 
@@ -26,21 +29,23 @@ Prerequisites:
 - Ethereum wallet with some testnet ETH (for minting)
 Installatin:
 - Clone the repository
-- Install dependencies
+- Install dependencies with 'npm install'
+next, react, ethers, @zoralabs/zdk, node-fetch, dotenv
 - Create environment variables file .env with the following content:
 REPLICATE_API_TOKEN=your_toke_here
 MODEL_VERSION=replicate_model_version_here
+SENTIMENT_MODEL_VERSION=sentiment_model_version_here
 Running the App:
 Start the development server: npm run dev
 
 Challenges I ran into:
 
-- Handling the asynchronous polling of the Replicate API for image generation
-- Running multiple predictions in parallel and synchronizing responses
+- Handling asynchronous polling of the Replicate API for both image and sentiment tasks
+- Running multiple image predictions and a parallel sentiment request efficiently
 - Managing API tokens securely without exposing them publicly
 - Integrating the Zora Coins SDK with wallet connection and minting logic
-- Styling and UX polishing within a limited timeframe
-- Managing user image selection and clean minting flow
+- Keeping the frontend UX clean and responsive despite added complexity
+- Synchronizing sentiment feedback with image generation results
 
 Technologies I used:
 
@@ -53,12 +58,12 @@ Technologies I used:
 
 How we built it:
 
-We set up a Next.js app with React hooks for state management. The backend API routes handle requests to the Replicate API, including polling for prediction completion. In this updated version, we generate three separate images based on the user's prompt. Once images are returned, the user can click to select one, which is then minted using the Zora Coins SDK. We styled the app with responsive, minimal CSS for clarity and usability.
+We built a Next.js app with React hooks for state and async logic. The backend handles two core API calls: one for image generation (creating and polling multiple predictions) and one for sentiment analysis using a separate Replicate model. The frontend displays sentiment results and generated images. The user can then select one image and mint it as a Zora Coin using MetaMask.
 
 What we learned:
 
-- How to integrate an AI model API with a blockchain minting protocol
-- Handling asynchronous API workflows and user feedback in the UI
+- How to combine different AI capabilities (image + sentiment) in one UX
+- Handling asynchronous API workflows in parallel
 - Managing wallet connections and transactions in a web app
 - Best practices for environment variables and API token security in Next.js
 - Creating dynamic, user-driven image selection flows before minting
