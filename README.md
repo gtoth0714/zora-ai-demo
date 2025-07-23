@@ -16,6 +16,8 @@ What it does:
 - Mints the selected image as a Zora Coin on the Ethereum testnet  
 - Connects to a MetaMask wallet for blockchain interaction
 
+Note: This project uses the Zora Coins SDK to mint tokens on the Base Sepolia Ethereum testnet (chainId: 84532). It requires MetaMask (or another Ethereum-compatible wallet) to connect, sign transactions, and interact with the blockchain.
+
 The problem it solves:
 
 Demonstrates a working integration of AI-generated content and sentiment analysis with blockchain minting using the Zora Coins SDK. This could serve as a foundation for future NFT, tokenized emotion, or AI-driven asset platforms.
@@ -26,7 +28,25 @@ Prerequisites:
 - Node.js (v16 or later recommended)
 - MetaMask browser extension
 - Replicate API token (for AI image generation)
-- Ethereum wallet with some testnet ETH (for minting)
+- Ethereum wallet with some testnet ETH on Base Sepolina (for minting)
+
+Add Base Sepolia network to MetaMask:
+- Open MetaMask
+- Go to "Networks" → "Add Network"
+- Enter the following details:
+
+Network Name: Base Sepolia
+RPC URL: https://rpc.base-sepolia.org
+Chain ID: 84532
+Currency Symbol: ETH
+Block Explorer URL: https://base-sepolia.blockscout.com/
+- Save the network
+
+Get testnet ETH for Base Sepolia
+- You need some test ETH to pay gas fees for minting.
+- Use a Base Sepolia faucet if available (check official Base or community channels).
+- Alternatively, get test ETH from someone who already has some on Base Sepolia.
+
 Installatin:
 - Clone the repository
 - Install dependencies with 'npm install'
@@ -37,6 +57,15 @@ MODEL_VERSION=replicate_model_version_here
 SENTIMENT_MODEL_VERSION=sentiment_model_version_here
 Running the App:
 Start the development server: npm run dev
+
+Mock Mode (for demo purposes - just demonstration):
+This project includes a mock version of the image generation and sentiment analysis APIs, allowing it to be demonstrated without a paid Replicate account.
+- These mock routes return predefined image URLs and a sample sentiment.
+- Useful for screencasts or showcasing the UI/UX flow.
+- To switch to mock mode, temporarily replace:
+/pages/api/generate.js → generate.mock.js
+/pages/api/sentiment.js → sentiment.mock.js
+For full functionality, set up the required environment variables and use the original files.
 
 Challenges I ran into:
 
@@ -67,6 +96,7 @@ What we learned:
 - Managing wallet connections and transactions in a web app
 - Best practices for environment variables and API token security in Next.js
 - Creating dynamic, user-driven image selection flows before minting
+- Handling wallet connections and chain validation
 
 What's next for:
 

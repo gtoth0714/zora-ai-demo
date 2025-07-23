@@ -8,7 +8,7 @@ export default function Home() {
   const [selectedImage, setSelectedImage] = useState("");
   const [loading, setLoading] = useState(false);
   const [minting, setMinting] = useState(false);
-  const [sentiment, setSentiment] = useState(""); // új állapot a hangulatnak
+  const [sentiment, setSentiment] = useState("");
   const [sentimentLoading, setSentimentLoading] = useState(false);
 
   async function generateImage(e) {
@@ -16,9 +16,8 @@ export default function Home() {
     setLoading(true);
     setImageUrls([]);
     setSelectedImage("");
-    setSentiment(""); // korábbi sentiment törlése
+    setSentiment("");
 
-    // Kép generálás fetch
     const res = await fetch("/api/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -34,7 +33,6 @@ export default function Home() {
     }
     setLoading(false);
 
-    // Párhuzamosan elindítjuk a sentiment lekérést
     getSentiment(prompt);
   }
 
@@ -74,9 +72,19 @@ export default function Home() {
     setMinting(true);
 
     try {
+      // Csatlakozás a wallethez
       await window.ethereum.request({ method: "eth_requestAccounts" });
+
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
+
+      // ✅ Hálózat ellenőrzés (Base Sepolia - chainId: 84532)
+      const { chainId } = await provider.getNetwork();
+      if (chainId !== 84532) {
+        alert("Please switch to the Base Sepolia network in MetaMask.");
+        setMinting(false);
+        return;
+      }
 
       const zora = new Zora({ signer });
 
@@ -118,7 +126,6 @@ export default function Home() {
           </button>
         </form>
 
-        {/* Sentiment megjelenítés */}
         {sentimentLoading && <p>Analyzing sentiment...</p>}
         {sentiment && !sentimentLoading && <p>Sentiment: {sentiment}</p>}
 
