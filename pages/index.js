@@ -4,14 +4,16 @@ import { ethers } from "ethers";
 
 export default function Home() {
   const [prompt, setPrompt] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
+  const [imageUrls, setImageUrls] = useState([]);
+  const [selectedImage, setSelectedImage] = useState("");
   const [loading, setLoading] = useState(false);
   const [minting, setMinting] = useState(false);
 
   async function generateImage(e) {
     e.preventDefault();
     setLoading(true);
-    setImageUrl("");
+    setImageUrls([]);
+    setSelectedImage("");
 
     const res = await fetch("/api/generate", {
       method: "POST",
@@ -22,9 +24,9 @@ export default function Home() {
     const data = await res.json();
 
     if (res.ok) {
-      setImageUrl(data.imageUrl);
+      setImageUrls(data.imageUrls);
     } else {
-      alert(data.error || "Error generating image");
+      alert(data.error || "Error generating images");
     }
     setLoading(false);
   }
@@ -34,6 +36,12 @@ export default function Home() {
       alert("Please install MetaMask!");
       return;
     }
+
+    if (!selectedImage) {
+      alert("Please select an image to mint.");
+      return;
+    }
+
     setMinting(true);
 
     try {
@@ -46,7 +54,7 @@ export default function Home() {
       const metadata = {
         name: "AI Generated Image",
         description: "This coin is minted from an AI-generated image.",
-        image: imageUrl,
+        image: selectedImage,
       };
 
       const tx = await zora.coins.mint({
@@ -65,28 +73,46 @@ export default function Home() {
   }
 
   return (
-    <div>
-      <h1>Zora AI Image Minting Demo</h1>
-      <form onSubmit={generateImage}>
-        <input
-          type="text"
-          placeholder="Enter prompt..."
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          required
-        />
-        <button type="submit" disabled={loading}>
-          {loading ? "Generating..." : "Generate Image"}
-        </button>
-      </form>
-      {imageUrl && (
-        <div>
-          <img src={imageUrl} alt="Generated" width="400" />
-          <button onClick={mintCoin} disabled={minting}>
-            {minting ? "Minting..." : "Mint as Zora Coin"}
+    <main>
+      <section className="container">
+        <h1>Zora AI Image Minting Demo</h1>
+        <form onSubmit={generateImage}>
+          <input
+            type="text"
+            placeholder="Enter prompt..."
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            required
+          />
+          <button type="submit" disabled={loading}>
+            {loading ? "Generating..." : "Generate Images"}
           </button>
-        </div>
-      )}
-    </div>
+        </form>
+
+        {imageUrls.length > 0 && (
+          <div className="image-grid">
+            {imageUrls.map((url, idx) => (
+              <img
+                key={idx}
+                src={url}
+                alt={`Generated ${idx}`}
+                onClick={() => setSelectedImage(url)}
+                className={selectedImage === url ? "selected" : ""}
+              />
+            ))}
+          </div>
+        )}
+
+        {selectedImage && (
+          <div className="image-container">
+            <h3>Selected image to mint:</h3>
+            <img src={selectedImage} alt="Selected to mint" />
+            <button onClick={mintCoin} disabled={minting}>
+              {minting ? "Minting..." : "Mint as Zora Coin"}
+            </button>
+          </div>
+        )}
+      </section>
+    </main>
   );
 }
